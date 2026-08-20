@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flutter Web 项目集合</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 48px 24px;
+        }
+        .page-wrap {
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 52px;
+        }
+        h1 {
+            font-size: 36px;
+            background: linear-gradient(90deg, #38bdf8, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 28px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 28px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, #a78bfa);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        .card:hover::before {
+            opacity: 1;
+        }
+        .card h3 {
+            font-size: 22px;
+            color: #f1f5f9;
+            margin-bottom: 14px;
+        }
+        .card .desc {
+            color: #cbd5e1;
+            line-height: 1.7;
+            font-size: 15px;
+            min-height: 60px;
+            margin-bottom: 24px;
+        }
+        .btn-open {
+            display: inline-block;
+            padding: 11px 24px;
+            background: linear-gradient(90deg, #38bdf8, #8b5cf6);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: opacity 0.25s ease;
+        }
+        .btn-open:hover {
+            opacity: 0.85;
+        }
+        .loading-box {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .spinner {
+            width: 42px;
+            height: 42px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #38bdf8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .empty, .error-box {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 70px 20px;
+            color: #94a3b8;
+        }
+        .error-box {
+            color: #f87171;
+        }
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+    <header>
+        <h1>Flutter Web 项目集合</h1>
+        <div class="subtitle">快速预览各个 Flutter Web 编译产物</div>
+    </header>
+
+    <div id="app" class="grid-container">
+        <div class="loading-box">
+            <div class="spinner"></div>
+            <div>正在加载项目列表…</div>
+        </div>
+    </div>
+
+    <footer>
+        提示：请使用 HTTP 服务访问，不支持 file:// 本地直接打开
+    </footer>
+</div>
+
+<script>
+const PROJECT_ROOT = "./project/";
+
+function parseDescription(text){
+    const lines = text.split(/\r?\n/);
+    let name = "";
+    let description = "";
+    for(const line of lines){
+        if(line.startsWith("name:")){
+            name = line.replace("name:","").trim();
+        }else if(line.startsWith("description:")){
+            description = line.replace("description:","").trim();
+        }
+    }
+    return {name, description};
+}
+
+async function loadProjectInfo(folderName){
+    const txtUrl = `${PROJECT_ROOT}${folderName}/description.txt`;
+    const res = await fetch(txtUrl);
+    if(!res.ok) throw new Error(`无法读取 ${txtUrl}`);
+    const text = await res.text();
+    const info = parseDescription(text);
+    return { ...info, folder: folderName };
+}
+
+async function getFolderList(){
+    const listUrl = `${PROJECT_ROOT}.folder-list.txt`;
+    const resp = await fetch(listUrl);
+    if(!resp.ok){
+        throw new Error("请在 project 目录创建 .folder-list.txt，每行填写一个子文件夹名称");
+    }
+    const raw = await resp.text();
+    return raw.split(/\r?\n/).map(s=>s.trim()).filter(s=>s.length>0);
+}
+
+function escapeHtml(str){
+    if(!str) return "";
+    return str.replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+async function render(){
+    const dom = document.getElementById("app");
+    try{
+        const folders = await getFolderList();
+        const projects = [];
+        for(const fd of folders){
+            try{
+                const p = await loadProjectInfo(fd);
+                projects.push(p);
+            }catch(e){
+                console.warn("跳过项目", fd, e);
+            }
+        }
+        dom.innerHTML = "";
+        if(projects.length === 0){
+            dom.innerHTML = `<div class="empty">暂无可用项目，请检查 .folder‑list.txt 和 description.txt</div>`;
+            return;
+        }
+        for(const prj of projects){
+            const prjUrl = `${PROJECT_ROOT}${prj.folder}/index.html`;
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <h3>${escapeHtml(prj.name||prj.folder)}</h3>
+                <p class="desc">${escapeHtml(prj.description||"暂无描述")}</p>
+                <a class="btn-open" href="${prjUrl}" target="_blank">打开项目</a>
+            `;
+            dom.appendChild(card);
+        }
+    }catch(err){
+        dom.innerHTML = `<div class="error-box">错误：${escapeHtml(err.message)}</div>`;
+        console.error(err);
+    }
+}
+
+render();
+</script>
+</body>
+</html>
