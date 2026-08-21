@@ -71,8 +71,6 @@ echo [3/3] 执行完成
 echo.
 echo ✅ 操作全部完成
 echo.
-echo 线上访问地址：https://drustan14.github.io/show/
-echo 提示：GitHub Pages 需要 1‑3 分钟生效，浏览器 Ctrl+F5 强制刷新
 echo.
 echo ====================================================
 pause
