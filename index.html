@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Flutter Web 项目集合</title>
     <style>
         * {
@@ -15,7 +15,7 @@
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: #e2e8f0;
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 24px 16px;
         }
         .page-wrap {
             max-width: 1200px;
@@ -23,10 +23,10 @@
         }
         header {
             text-align: center;
-            margin-bottom: 44px;
+            margin-bottom: 32px;
         }
         h1 {
-            font-size: 34px;
+            font-size: 28px;
             background: linear-gradient(90deg, #38bdf8, #a78bfa);
             -webkit-background-clip: text;
             background-clip: text;
@@ -34,14 +34,14 @@
         }
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
         }
         .card {
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 24px;
+            padding: 20px;
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
             position: relative;
@@ -59,7 +59,7 @@
             transition: opacity 0.3s;
         }
         .card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-4px);
             box-shadow: 0 10px 32px rgba(56, 189, 248, 0.14);
             border-color: rgba(56, 189, 248, 0.28);
         }
@@ -67,20 +67,21 @@
             opacity: 1;
         }
         .card h3 {
-            font-size: 20px;
+            font-size: 18px;
             color: #f1f5f9;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         .card .desc {
             color: #cbd5e1;
-            line-height: 1.65;
-            font-size: 15px;
-            min-height: 54px;
-            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 14px;
+            min-height: 48px;
+            margin-bottom: 18px;
         }
         .btn-open {
-            display: inline-block;
-            padding: 10px 22px;
+            display: block;
+            text-align: center;
+            padding: 12px 16px;
             background: linear-gradient(90deg, #38bdf8, #8b5cf6);
             color: #ffffff;
             text-decoration: none;
@@ -94,7 +95,7 @@
         .loading-box {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 50px 20px;
+            padding: 40px 16px;
         }
         .spinner {
             width: 38px;
@@ -111,11 +112,24 @@
         .empty, .error-box {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 16px;
             color: #94a3b8;
         }
         .error-box {
             color: #f87171;
+        }
+
+        /* 手机小屏幕强制单列 */
+        @media (max-width: 480px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            body {
+                padding: 20px 12px;
+            }
         }
     </style>
 </head>
