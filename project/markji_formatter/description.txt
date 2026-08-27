@@ -1,0 +1,2 @@
+name:笔记转换器
+description:快速制作卡片
