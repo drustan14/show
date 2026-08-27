@@ -1,4 +1,5 @@
 markji_formatter 
 new_to_do_list 
 personal_bills_note 
+speed 
 tuixiangzi 
