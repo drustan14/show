@@ -54,16 +54,14 @@ echo.
 
 git add .
 git commit -m "auto update gallery list"
+
+:: 无论本次有没有新提交，都执行推送
+git push -u origin main
 if !errorlevel! neq 0 (
-    echo [提示] 没有文件变更，无需提交
-) else (
-    git push -u origin main
-    if !errorlevel! neq 0 (
-        echo [错误] Git推送失败，请检查网络/权限！
-        echo.
-        pause
-        exit /b 1
-    )
+    echo [错误] Git推送失败，请检查网络/权限！
+    echo.
+    pause
+    exit /b 1
 )
 
 echo.
