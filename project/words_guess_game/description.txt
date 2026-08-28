@@ -1,0 +1,2 @@
+name:猜单词游戏
+description:有些可玩性
