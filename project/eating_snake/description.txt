@@ -1,0 +1,2 @@
+name:贪吃蛇游戏
+description:第一次使用annotaion generator
