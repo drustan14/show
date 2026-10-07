@@ -1,4 +1,5 @@
 eating_snake 
+infinite_blocks 
 ji_suan_qi 
 markji_formatter 
 new_to_do_list 
